@@ -292,9 +292,30 @@ define(["dojo/_base/lang", "dojo/_base/declare", "dojo/_base/connect", "dojo/_ba
 					fontWidth = g._base._getTextBox(text, {font: axisTickFont}).w || 0;
 						render = this.opt.htmlLabels && g.renderer != "vml" ? "html" : "gfx";
 					if(this.opt.htmlLabels){
-						this.htmlElements.push(da.createText[render]
-							(this.chart, textGroup, (!domGeom.isBodyLtr() && render == "html") ? (point.x + fontWidth - dim.width) : point.x, point.y,
-								"start", text, axisTickFont, axisTickFontColor));
+						var x = (!domGeom.isBodyLtr() && render == "html") ?
+						    (point.x + fontWidth - dim.width) : point.x;
+						var element = da.createText[render](
+						     this.chart,
+						     textGroup,
+						     x,
+						     point.y,
+						     "start",
+						     text,
+						     axisTickFont,
+						     axisTickFontColor);	
+
+						// to enable styling and positioning relative to node via user css
+						if (render == "html") {
+							element.style.position = "absolute";
+							element.style.width = x + "px";
+							element.style.height = point.y + "px";
+							element.firstChild.className = "spiderLabel";
+							element.firstChild.style.position = "absolute";
+							element.firstChild.style.top = "";
+							element.firstChild.style.bottom = 0;
+						}
+						
+						this.htmlElements.push(element);
 					}
 				}
 				k++;
