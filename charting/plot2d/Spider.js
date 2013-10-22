@@ -250,10 +250,25 @@ define(["dojo/_base/lang", "dojo/_base/declare", "dojo/_base/connect", "dojo/_ba
 				point = labelPoints[j];
 				fontWidth = g._base._getTextBox(this.labelKey[j], {font: axisFont}).w || 0;
 				render = this.opt.htmlLabels && g.renderer != "vml" ? "html" : "gfx";
-				var elem = da.createText[render](this.chart, labelGroup, (!domGeom.isBodyLtr() && render == "html") ? (point.x + fontWidth - dim.width) : point.x, point.y,
-							"middle", this.labelKey[j], axisFont, axisFontColor);
 				if(this.opt.htmlLabels){
-					this.htmlElements.push(elem);
+					var x = (!domGeom.isBodyLtr() && render == "html") ?
+						(point.x + fontWidth - dim.width) : point.x;
+					var element = da.createText[render](
+						this.chart,
+						labelGroup,
+						x,
+						point.y,
+						"middle",
+						this.labelKey[j],
+						axisFont,
+						axisFontColor);
+
+					if (render == "html"){
+						element.firstChild.className = "axisLabel";
+						element.firstChild.style.position = "absolute";
+					}
+
+					this.htmlElements.push(element);
 				}
 			}
 			
@@ -290,7 +305,7 @@ define(["dojo/_base/lang", "dojo/_base/declare", "dojo/_base/connect", "dojo/_ba
 					point = this._getCoordinate(circle, r*(ro + (1-ro)*i/(dv-1)), end, dim);
 					text = this._getLabel(text);
 					fontWidth = g._base._getTextBox(text, {font: axisTickFont}).w || 0;
-						render = this.opt.htmlLabels && g.renderer != "vml" ? "html" : "gfx";
+					render = this.opt.htmlLabels && g.renderer != "vml" ? "html" : "gfx";
 					if(this.opt.htmlLabels){
 						var x = (!domGeom.isBodyLtr() && render == "html") ?
 						    (point.x + fontWidth - dim.width) : point.x;
@@ -305,11 +320,11 @@ define(["dojo/_base/lang", "dojo/_base/declare", "dojo/_base/connect", "dojo/_ba
 						     axisTickFontColor);	
 
 						// to enable styling and positioning relative to node via user css
-						if (render == "html") {
+						if (render == "html"){
 							element.style.position = "absolute";
 							element.style.width = x + "px";
 							element.style.height = point.y + "px";
-							element.firstChild.className = "spiderLabel";
+							element.firstChild.className = "nodeLabel";
 							element.firstChild.style.position = "absolute";
 							element.firstChild.style.top = "";
 							element.firstChild.style.bottom = 0;
