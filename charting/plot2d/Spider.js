@@ -319,12 +319,26 @@ define(["dojo/_base/lang", "dojo/_base/declare", "dojo/_base/connect", "dojo/_ba
 						     axisTickFont,
 						     axisTickFontColor);	
 
-						// to enable styling and positioning relative to node via user css
 						if (render == "html"){
+							// to enable styling based on value via user css
+							var threshold = undefined;
+							if (this.chart.thresholds) {
+								this.chart.thresholds.concat(Infinity).some(function(value, i){
+									if (text < value) {
+										threshold = i;
+										return true;
+									}
+								});
+							}
+
+							// to enable styling and positioning relative to node via user css
 							element.style.position = "absolute";
 							element.style.width = x + "px";
 							element.style.height = point.y + "px";
 							element.firstChild.className = "nodeLabel";
+							if (threshold !== undefined) {
+								element.firstChild.className += " threshold" + threshold;
+							}
 							element.firstChild.style.position = "absolute";
 							element.firstChild.style.top = "";
 							element.firstChild.style.bottom = 0;
